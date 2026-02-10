@@ -48,10 +48,10 @@
           <ion-select-option value="Friend">{{ translate("Friend") }}</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
+      <ion-item :lines="errors.phone ? 'none' : ''">
         <ion-input v-model="form.phone" :label="translate('Phone')" label-placement="floating" type="tel" :disabled="isSubmitting || (sameAsBilling &&isPhonePrefilled)" :error-text="errors.phone" :class="{ 'ion-invalid': errors.phone, 'ion-touched': errors.phone }" />
       </ion-item>
-      <ion-item>
+      <ion-item :lines="errors.email ? 'none' : ''">
         <ion-input v-model="form.email" :label="translate('Email')" label-placement="floating" type="email" :disabled="isSubmitting || (sameAsBilling && isEmailPrefilled)" :error-text="errors.email" :class="{ 'ion-invalid': errors.email, 'ion-touched': errors.email }" />
       </ion-item>
     </template>
