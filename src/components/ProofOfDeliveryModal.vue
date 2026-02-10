@@ -35,10 +35,10 @@
       </ion-item>
 
       <ion-item>
-        <ion-input v-model="form.name" :label="translate('Name')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isNamePrefilled)" required/>
+        <ion-input v-model="form.name" :error-text="errors.name" :class="{ 'ion-invalid': errors.name, 'ion-touched': errors.name }" :label="translate('Name')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isNamePrefilled)" required/>
       </ion-item>
       <ion-item>
-        <ion-input v-model="form.idNumber" :label="translate('ID Number')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isIdPrefilled)" required/>
+        <ion-input v-model="form.idNumber" :error-text="errors.idNumber" :class="{ 'ion-invalid': errors.idNumber, 'ion-touched': errors.idNumber }" :label="translate('ID Number')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isIdPrefilled)" required/>
       </ion-item>
 
       <ion-item>
@@ -160,16 +160,6 @@ const formSchema = z.object({
   email: z.email(translate("Please enter a valid email")).or(z.literal("")),
   phone: z.string().regex(/^\+?\d{10,15}$/, translate("Please enter a valid phone or country code")).optional().or(z.literal(""))
 });
-
-watch(form, () => {
-  const result = formSchema.safeParse(form.value);
-  errors.value = {};
-  if (!result.success) {
-    result.error.issues.forEach(issue => {
-      errors.value[issue.path[0]] = issue.message;
-    });
-  }
-}, { deep: true });
 
 const getBillingDetails = async () => {
   if (!props.order?.orderId) return;
