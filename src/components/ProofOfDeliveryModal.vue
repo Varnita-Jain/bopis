@@ -34,10 +34,10 @@
         </ion-checkbox>
       </ion-item>
 
-      <ion-item>
+      <ion-item :lines="errors.name ? 'none' : ''">
         <ion-input v-model="form.name" :error-text="errors.name" :class="{ 'ion-invalid': errors.name, 'ion-touched': errors.name }" :label="translate('Name')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isNamePrefilled)" required/>
       </ion-item>
-      <ion-item>
+      <ion-item :lines="errors.name ? 'none' : ''">
         <ion-input v-model="form.idNumber" :error-text="errors.idNumber" :class="{ 'ion-invalid': errors.idNumber, 'ion-touched': errors.idNumber }" :label="translate('ID Number')" label-placement="floating" :disabled="isSubmitting || (sameAsBilling && isIdPrefilled)" required/>
       </ion-item>
 
