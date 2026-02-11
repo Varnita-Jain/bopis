@@ -33,7 +33,15 @@ npm-debug.log*
 /plugins
 /www
 .gradle
+# Ignore real environment files
+.env
+.env.local
+.env.dev
+.env.test
+.env.prod
 
-# Excluding the .env.example file from .gitignore
+# Keep example file
 !.env.example
+
+
 .firebase
