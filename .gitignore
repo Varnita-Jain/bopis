@@ -27,6 +27,8 @@ npm-debug.log*
 /coverage
 /dist
 /node_modules
+/playwright-report
+/test-results
 /platforms
 /plugins
 /www
