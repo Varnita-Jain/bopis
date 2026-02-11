@@ -31,6 +31,31 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Generate .env for Playwright
+        run: |
+          cp .env.example .env
+
+          upsert_env() {
+            key="$1"
+            value="$2"
+            if grep -q "^${key}=" .env; then
+              awk -v k="$key" -v v="$value" '
+                BEGIN { FS=OFS="=" }
+                $1 == k { $0 = k "=" v }
+                { print }
+              ' .env > .env.tmp && mv .env.tmp .env
+            else
+              printf "%s=%s\n" "$key" "$value" >> .env
+            fi
+          }
+
+          upsert_env CURRENT_APP_URL "${CURRENT_APP_URL}"
+          upsert_env OMS_NAME "${OMS_NAME}"
+          upsert_env USERNAME "${USERNAME}"
+          upsert_env PASSWORD "${PASSWORD}"
+          upsert_env TEST_ENV "dev"
+          upsert_env TEST_USER "admin"
+
       - name: Install dependencies
         run: npm ci
 

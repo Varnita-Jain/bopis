@@ -1,0 +1,339 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic:
+    - main [ref=e4]
+    - generic [ref=e7]:
+      - banner [ref=e8]:
+        - generic [ref=e10]:
+          - button "back" [ref=e12] [cursor=pointer]:
+            - generic [ref=e13]:
+              - img:
+                - generic:
+                  - img
+          - generic [ref=e16]:
+            - generic: Order details
+          - generic [ref=e17]:
+            - button [ref=e19] [cursor=pointer]:
+              - generic [ref=e20]:
+                - generic:
+                  - img:
+                    - generic:
+                      - img
+            - button [ref=e22] [cursor=pointer]:
+              - generic [ref=e23]:
+                - generic:
+                  - img:
+                    - generic:
+                      - img
+      - main [ref=e24]:
+        - main [ref=e27]:
+          - complementary [ref=e28]:
+            - generic [ref=e31]:
+              - heading "Timeline" [level=2] [ref=e33]
+              - generic [ref=e34]:
+                - generic: Ready for pickup
+            - list [ref=e35]:
+              - listitem [ref=e36]:
+                - generic [ref=e37]:
+                  - img [ref=e38]:
+                    - img [ref=e40]
+                  - generic [ref=e43]:
+                    - generic [ref=e45]: Created in Shopify
+                    - generic [ref=e46]:
+                      - generic: Jan 6, 2026, 1:10 AM
+              - listitem [ref=e47]:
+                - generic [ref=e48]:
+                  - img [ref=e49]:
+                    - img [ref=e51]
+                  - generic [ref=e54]:
+                    - generic [ref=e56]:
+                      - paragraph [ref=e57]: + 1 minutes
+                      - text: Imported from Shopify
+                    - generic [ref=e58]:
+                      - generic: Jan 6, 2026, 1:12 AM
+              - listitem [ref=e59]:
+                - generic [ref=e60]:
+                  - img [ref=e61]:
+                    - img [ref=e63]
+                  - generic [ref=e66]:
+                    - generic [ref=e68]:
+                      - paragraph [ref=e69]: + 1 months 4 days 22 hours 59 minutes
+                      - text: Ready for pickup
+                    - generic [ref=e70]:
+                      - generic: Feb 11, 2026, 12:10 AM
+          - generic [ref=e71]:
+            - generic [ref=e73]:
+              - img [ref=e74]:
+                - img [ref=e76]
+              - generic [ref=e79]:
+                - generic [ref=e81]:
+                  - heading "HCDEV#4571" [level=1] [ref=e82]
+                  - paragraph [ref=e83]: "2532"
+                - generic [ref=e84] [cursor=pointer]:
+                  - generic:
+                    - img [ref=e85]:
+                      - img [ref=e87]
+                    - generic [ref=e90]: Orem
+            - generic [ref=e92]:
+              - img [ref=e93]:
+                - img [ref=e95]
+              - generic [ref=e100]: Order is now ready to handover.
+            - generic [ref=e101]:
+              - generic:
+                - generic [ref=e104]:
+                  - img [ref=e106]
+                  - generic [ref=e107]:
+                    - generic [ref=e109]:
+                      - heading "MH09XSBlueHC-01" [level=2] [ref=e110]
+                      - paragraph [ref=e111]: MH09XSBlueHC-01
+                    - button [ref=e114] [cursor=pointer]:
+                      - generic [ref=e115]:
+                        - generic:
+                          - img:
+                            - generic:
+                              - img
+                - generic [ref=e118]:
+                  - img [ref=e120]
+                  - generic [ref=e121]:
+                    - generic [ref=e123]:
+                      - heading "MH09XSBlueHC-01" [level=2] [ref=e124]
+                      - paragraph [ref=e125]: MH09XSBlueHC-01
+                    - button [ref=e128] [cursor=pointer]:
+                      - generic [ref=e129]:
+                        - generic:
+                          - img:
+                            - generic:
+                              - img
+            - generic [ref=e133]:
+              - generic:
+                - generic:
+                  - button "Ready for pickup" [disabled]:
+                    - generic:
+                      - generic:
+                        - img:
+                          - generic:
+                            - img
+                      - generic: Ready for pickup
+                - generic:
+                  - button "Reject Items" [disabled]:
+                    - generic:
+                      - generic: Reject Items
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - generic:
+                  - generic [ref=e136]:
+                    - generic:
+                      - heading [level=2]
+                  - list [ref=e137]:
+                    - listitem [ref=e138]:
+                      - generic [ref=e139]:
+                        - img [ref=e140]:
+                          - img [ref=e142]
+                        - generic [ref=e147]: "-"
+                    - listitem [ref=e148]:
+                      - generic [ref=e149]:
+                        - img [ref=e150]:
+                          - img [ref=e152]
+                        - generic [ref=e156]: "-"
+                    - listitem [ref=e157]:
+                      - generic [ref=e158]:
+                        - img [ref=e159]:
+                          - img [ref=e161]
+                        - generic [ref=e168]:
+                          - paragraph
+                          - paragraph
+                          - paragraph
+                          - paragraph
+              - generic [ref=e169]:
+                - generic:
+                  - heading "Payment" [level=2] [ref=e171]:
+                    - generic: Payment
+                  - generic [ref=e172]:
+                    - list [ref=e173]:
+                      - listitem [ref=e174]:
+                        - generic [ref=e176]:
+                          - generic [ref=e178]:
+                            - paragraph [ref=e179]: EXT_SHOP_OTHR_GTWAY
+                            - generic [ref=e180]: Ext Other Gateways
+                            - generic: "Refunded at : 6 Jan 2026, 1:12 AM"
+                          - generic [ref=e182]: $ 407
+                    - list [ref=e183]:
+                      - listitem [ref=e184]:
+                        - generic [ref=e186]:
+                          - generic [ref=e188]:
+                            - paragraph [ref=e189]: EXT_SHOP_OTHR_GTWAY
+                            - generic [ref=e190]: Ext Other Gateways
+                            - generic: "Settled at : 6 Jan 2026, 1:12 AM"
+                          - generic [ref=e192]: $ 1421
+          - generic [ref=e193]:
+            - generic [ref=e198]: Other shipments in this order
+            - generic [ref=e199]:
+              - generic [ref=e200]:
+                - generic:
+                  - generic [ref=e201]:
+                    - generic:
+                      - generic [ref=e202]:
+                        - heading "Retail Store" [level=3] [ref=e203]:
+                          - generic: Retail Store
+                        - heading "Boston" [level=2] [ref=e204]:
+                          - generic: Boston
+                        - text: "00002"
+                      - generic [ref=e205]:
+                        - generic: Open
+                  - generic [ref=e208]:
+                    - generic [ref=e209]:
+                      - generic: FedEx
+                    - img [ref=e210]:
+                      - img [ref=e212]
+                  - generic [ref=e215]:
+                    - img [ref=e217]
+                    - generic [ref=e218]:
+                      - generic [ref=e220]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e221]
+                        - paragraph [ref=e222]: MH09XSBlueHC-01
+                      - button [ref=e225] [cursor=pointer]:
+                        - generic [ref=e226]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+              - generic [ref=e227]:
+                - generic:
+                  - generic [ref=e228]:
+                    - generic:
+                      - generic [ref=e229]:
+                        - heading "Retail Store" [level=3] [ref=e230]:
+                          - generic: Retail Store
+                        - heading "Boston" [level=2] [ref=e231]:
+                          - generic: Boston
+                        - text: "00003"
+                      - generic [ref=e232]:
+                        - generic: Completed
+                  - generic [ref=e235]:
+                    - generic [ref=e236]:
+                      - generic: Default
+                    - img [ref=e237]:
+                      - img [ref=e239]
+                  - generic [ref=e242]:
+                    - img [ref=e244]
+                    - generic [ref=e245]:
+                      - generic [ref=e247]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e248]
+                        - paragraph [ref=e249]: MH09XSBlueHC-01
+                      - button [ref=e252] [cursor=pointer]:
+                        - generic [ref=e253]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e255]:
+                    - img [ref=e257]
+                    - generic [ref=e258]:
+                      - generic [ref=e260]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e261]
+                        - paragraph [ref=e262]: MH09XSBlueHC-01
+                      - button [ref=e265] [cursor=pointer]:
+                        - generic [ref=e266]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e268]:
+                    - img [ref=e270]
+                    - generic [ref=e271]:
+                      - generic [ref=e273]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e274]
+                        - paragraph [ref=e275]: MH09XSBlueHC-01
+                      - button [ref=e278] [cursor=pointer]:
+                        - generic [ref=e279]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e281]:
+                    - img [ref=e283]
+                    - generic [ref=e284]:
+                      - generic [ref=e286]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e287]
+                        - paragraph [ref=e288]: MH09XSBlueHC-01
+                      - button [ref=e291] [cursor=pointer]:
+                        - generic [ref=e292]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e294]:
+                    - img [ref=e296]
+                    - generic [ref=e297]:
+                      - generic [ref=e299]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e300]
+                        - paragraph [ref=e301]: MH09XSBlueHC-01
+                      - button [ref=e304] [cursor=pointer]:
+                        - generic [ref=e305]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e307]:
+                    - img [ref=e309]
+                    - generic [ref=e310]:
+                      - generic [ref=e312]:
+                        - heading "MH09XSBlueHC-01" [level=2] [ref=e313]
+                        - paragraph [ref=e314]: MH09XSBlueHC-01
+                      - button [ref=e317] [cursor=pointer]:
+                        - generic [ref=e318]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e320]:
+                    - img [ref=e322]
+                    - generic [ref=e323]:
+                      - generic [ref=e325]:
+                        - heading [level=2]
+                        - paragraph
+                      - button [ref=e328] [cursor=pointer]:
+                        - generic [ref=e329]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e331]:
+                    - img [ref=e333]
+                    - generic [ref=e334]:
+                      - generic [ref=e336]:
+                        - heading [level=2]
+                        - paragraph
+                      - button [ref=e339] [cursor=pointer]:
+                        - generic [ref=e340]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e342]:
+                    - img [ref=e344]
+                    - generic [ref=e345]:
+                      - generic [ref=e347]:
+                        - heading [level=2]
+                        - paragraph
+                      - button [ref=e350] [cursor=pointer]:
+                        - generic [ref=e351]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+                  - generic [ref=e353]:
+                    - img [ref=e355]
+                    - generic [ref=e356]:
+                      - generic [ref=e358]:
+                        - heading [level=2]
+                        - paragraph
+                      - button [ref=e361] [cursor=pointer]:
+                        - generic [ref=e362]:
+                          - generic:
+                            - img:
+                              - generic:
+                                - img
+```
