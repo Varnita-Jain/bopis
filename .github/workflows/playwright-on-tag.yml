@@ -1,6 +1,6 @@
 name: Playwright Automation
 
-on: 
+on:
   workflow_dispatch:
   push: 
     tags:
