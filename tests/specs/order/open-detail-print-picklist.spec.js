@@ -8,6 +8,7 @@ import { loginToOrders } from "../../helpers/auth";
 test("Open Details Page: Print Picklist When Picker Not Assigned", async ({
   page,
 }) => {
+  // Scenario: open-order detail where printing requires picker assignment first.
   const orderPage = new OrderPage(page);
   const openDetail = new OpenDetailPage(page);
   const orderDetail = new OrderDetailPage(page);
@@ -28,6 +29,7 @@ test("Open Details Page: Print Picklist When Picker Not Assigned", async ({
   }
   await openDetail.printPicklist();
   await openDetail.verifyAssignPickerModal();
+  // If assignment is required, validate the modal can provide picker options.
   if ((await openDetail.assignPickerRadios.count()) === 0) {
     test.skip(true, "No pickers available for assignment");
     return;
@@ -40,6 +42,7 @@ test("Open Details Page: Print Picklist When Picker Not Assigned", async ({
 test("Open Details Page: Print Picklist When Picker Is Assigned", async ({
   page,
 }) => {
+  // Scenario: open-order detail where picklist print should proceed without assignment.
   await loginToOrders(page);
   const orderPage = new OrderPage(page);
   const openDetail = new OpenDetailPage(page);

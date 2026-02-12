@@ -7,12 +7,15 @@ import { OpenDetailPage } from "../../pages/order-detail/open-order-detail.page"
 import { loginToOrders } from "../../helpers/auth";
 
 test("Open -> Packed -> Completed: Handover flow", async ({ page }) => {
+  // End-to-end scenario:
+  // Open order -> mark ready for pickup -> handover from packed detail -> verify completion signal.
   const orderPage = new OrderPage(page);
   const openDetail = new OpenDetailPage(page);
   const packedPage = new PackedOrderPage(page);
   const packedDetail = new PackedDetailPage(page);
   const completedPage = new CompletedOrdersPage(page);
   const closeOtherPages = async () => {
+    // Print flows can open extra tabs; close them to keep the test on the app tab.
     const pages = page.context().pages();
     for (const p of pages) {
       if (p !== page) {

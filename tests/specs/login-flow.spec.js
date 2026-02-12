@@ -6,6 +6,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
   test("Verify user can select BOPIS app and complete full login flow", async ({
     page,
   }) => {
+    // Scenario: positive auth path from Launchpad -> BOPIS -> authenticated session.
     // Get environment config
     const env = getEnvironment();
 
@@ -40,6 +41,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 1: Empty OMS field
   test("Verify error when OMS field is empty", async ({ page }) => {
+    // Scenario: user attempts to continue without entering OMS.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 
@@ -68,6 +70,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 2: Invalid username
   test("Verify error message for invalid username", async ({ page }) => {
+    // Scenario: invalid username should not authenticate.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 
@@ -127,6 +130,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 3: Invalid password
   test("Verify error message for invalid password", async ({ page }) => {
+    // Scenario: valid username + wrong password should remain on login.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 
@@ -173,6 +177,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 4: Empty username field
   test("Verify error when username field is empty", async ({ page }) => {
+    // Scenario: empty username should block or fail login.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 
@@ -221,6 +226,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 5: Empty password field
   test("Verify error when password field is empty", async ({ page }) => {
+    // Scenario: empty password should block or fail login.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 
@@ -269,6 +275,7 @@ test.describe("Launchpad – BOPIS App Full Login Flow", () => {
 
   // Negative Test Case 6: Invalid OMS
   test("Verify error when invalid OMS is entered", async ({ page }) => {
+    // Scenario: invalid OMS should not produce a successful authenticated session.
     const env = getEnvironment();
     const loginPage = new LoginPage(page);
 

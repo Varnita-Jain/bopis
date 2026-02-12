@@ -7,6 +7,7 @@ import { loginToOrders } from "../../helpers/auth";
 
 // Gift Card Activation Packed List page
 test("Pack Orders Page: Gift Card Activation", async ({ page }) => {
+  // Scenario: activate gift card directly from packed list card.
   await loginToOrders(page);
 
   const packedOrders = new PackedOrderPage(page);
@@ -25,6 +26,7 @@ test("Pack Orders Page: Gift Card Activation", async ({ page }) => {
 
 // Gift Card Activation Packed Detail page
 test("Pack Details Page: Gift Card Activation", async ({ page }) => {
+  // Scenario: open packed order detail and activate gift card from item action.
   await loginToOrders(page);
 
   const packedOrders = new PackedOrderPage(page);
@@ -47,6 +49,7 @@ test("Pack Details Page: Gift Card Activation", async ({ page }) => {
 
 // Gift Card Activation Completed Detail page
 test("Completed Details Page: Gift Card Activation", async ({ page }) => {
+  // Scenario: activate gift card from completed-order detail page.
   const completedOrders = new CompletedOrdersPage(page);
   const orderDetail = new OrderDetailPage(page);
 
@@ -68,6 +71,7 @@ test("Completed Details Page: Gift Card Activation", async ({ page }) => {
 
 // Gift Card Activation Completed List page
 test("Completed Orders Page: Gift Card Activation", async ({ page }) => {
+  // Scenario: activate gift card directly from completed list card.
   const completedOrders = new CompletedOrdersPage(page);
   const orderDetail = new OrderDetailPage(page);
   const orderList = new OrderPage(page);

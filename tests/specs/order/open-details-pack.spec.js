@@ -7,6 +7,7 @@ import { loginToOrders } from "../../helpers/auth";
 test("Open Details Page: Pack Order When Tracking Enabled", async ({
   page,
 }) => {
+  // Scenario: open-order detail flow where tracking may require picker assignment.
   const packOpenOrder = new OpenDetailPage(page);
   const orderPage = new OrderPage(page);
   await loginToOrders(page);
@@ -27,6 +28,7 @@ test("Open Details Page: Pack Order When Tracking Enabled", async ({
   await orderPage.clickFirstOrderCard();
   await packOpenOrder.verifyDetailPage();
   await packOpenOrder.markReadyForPickup();
+  // Branch by product-store config / runtime state: modal flow vs alert flow.
   if (await packOpenOrder.assignPickerModal.isVisible().catch(() => false)) {
     const pickerCount = await packOpenOrder.assignPickerRadios.count();
     if (pickerCount === 0) {
@@ -45,6 +47,7 @@ test("Open Details Page: Pack Order When Tracking Enabled", async ({
 test("Open Details Page: Pack Order When Tracking Disabled", async ({
   page,
 }) => {
+  // Scenario: open-order detail flow where direct confirmation may be used.
   const packOpenOrder = new OpenDetailPage(page);
   const orderPage = new OrderPage(page);
   await loginToOrders(page);
@@ -65,6 +68,7 @@ test("Open Details Page: Pack Order When Tracking Disabled", async ({
   await orderPage.clickFirstOrderCard();
   await packOpenOrder.verifyDetailPage();
   await packOpenOrder.markReadyForPickup();
+  // Handle whichever post-click UI appears in this environment.
   if (await packOpenOrder.readyForPickupAlertBox.isVisible().catch(() => false)) {
     await packOpenOrder.confirmReadyPickupAlert().catch(() => {});
   } else if (await packOpenOrder.assignPickerModal.isVisible().catch(() => false)) {

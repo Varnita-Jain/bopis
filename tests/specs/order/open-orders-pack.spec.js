@@ -5,6 +5,7 @@ import { loginToOrders } from "../../helpers/auth";
 
 // Pack order from list page when Tracking is  Enabled
 test("Open Orders Page: Pack Order When Tracking Enabled", async ({ page }) => {
+  // Scenario: list-page pack action where picker modal or alert can appear.
   await loginToOrders(page);
   const orderPage = new OrderPage(page);
   const packOpenOrder = new OpenOrderPage(page);
@@ -18,6 +19,7 @@ test("Open Orders Page: Pack Order When Tracking Enabled", async ({ page }) => {
     return;
   }
   await packOpenOrder.markReadyForPickup();
+  // Handle both tracking-enabled (picker modal) and alert confirmation variants.
   if (await packOpenOrder.assignPickerModal.isVisible().catch(() => false)) {
     const pickerCount = await packOpenOrder.assignPickerRadios.count();
     if (pickerCount === 0) {
@@ -35,6 +37,7 @@ test("Open Orders Page: Pack Order When Tracking Enabled", async ({ page }) => {
 test("Open Orders Page: Pack Order When Tracking Disabled", async ({
   page,
 }) => {
+  // Scenario: list-page pack action where direct confirmation is expected.
   await loginToOrders(page);
 
   const packOpenOrder = new OpenOrderPage(page);

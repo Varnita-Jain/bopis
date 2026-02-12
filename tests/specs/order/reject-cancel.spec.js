@@ -8,6 +8,7 @@ import { loginToOrders } from "../../helpers/auth";
 
 // ---------------- SINGLE ITEM ORDER REJECTION ----------------
 test("Open Details Page: Single Item Order Rejection", async ({ page }) => {
+  // Scenario: reject flow for orders that contain exactly one line item.
   const openOrders = new OpenOrderPage(page);
   const orderDetail = new OrderDetailPage(page);
   const openOrderDetail = new OpenDetailPage(page);
@@ -32,6 +33,7 @@ test("Open Details Page: Single Item Order Rejection", async ({ page }) => {
 
 // ---------------- MULTIPLE ITEM ORDER REJECTION ----------------
 test("Open Details Page: Multiple Item Order Rejection", async ({ page }) => {
+  // Scenario: reject flow for orders with multiple line items.
   const openOrders = new OpenOrderPage(page);
   const orderDetail = new OrderDetailPage(page);
   const openOrderDetail = new OpenDetailPage(page);
@@ -58,6 +60,7 @@ test("Open Details Page: Multiple Item Order Rejection", async ({ page }) => {
 test("Packed Details Page: Single Item Order Cancellation", async ({
   page,
 }) => {
+  // Scenario: cancel flow for packed orders with one line item.
   const packedDetail = new PackedDetailPage(page);
   const orderPage = new OrderPage(page);
 
@@ -77,6 +80,7 @@ test("Packed Details Page: Single Item Order Cancellation", async ({
 test("Packed Details Page: Multiple Item Order Cancellation", async ({
   page,
 }) => {
+  // Scenario: cancel flow for packed orders with multiple line items.
   const packedDetail = new PackedDetailPage(page);
   const orderPage = new OrderPage(page);
   await loginToOrders(page);
