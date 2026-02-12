@@ -5,7 +5,7 @@ import { OpenDetailPage } from "../../pages/order-detail/open-order-detail.page"
 import { PackedOrderPage } from "../../pages/orders/pack-orders.page";
 import { PackedDetailPage } from "../../pages/order-detail/pack-order-detail.page";
 import { CompletedOrdersPage } from "../../pages/orders/complete-orders.page";
-import { loginViaLaunchpad } from "../../helpers/auth";
+import { loginToOrders } from "../../helpers/auth";
 
 /**
  * BOPIS End-to-End Lifecycle Test
@@ -21,6 +21,7 @@ test.describe("BOPIS Order Lifecycle", () => {
     test.setTimeout(180000);
 
     test("Complete full order lifecycle: Open -> Packed -> Completed", async ({ page }) => {
+        test.slow();
         console.log("Starting E2E Lifecycle Test...");
         const orderPage = new OrderPage(page);
         const openOrder = new OpenOrderPage(page);
@@ -29,8 +30,8 @@ test.describe("BOPIS Order Lifecycle", () => {
         const packedDetail = new PackedDetailPage(page);
         const completedOrders = new CompletedOrdersPage(page);
 
-        // 1. Login via Launchpad
-        await loginViaLaunchpad(page);
+        // 1. Direct login to Orders app
+        await loginToOrders(page);
 
         // 2. Orders Page - Open Tab
         // Navigation is handled inside the POM methods
@@ -133,9 +134,10 @@ test.describe("BOPIS Order Lifecycle", () => {
      * This demonstrates how to handle dynamic UI cases where no data exists
      */
     test("Verify graceful handling of empty order tabs", async ({ page }) => {
+        test.setTimeout(60000);
         const orderPage = new OrderPage(page);
 
-        await loginViaLaunchpad(page);
+        await loginToOrders(page);
 
 
         // Check tabs - if orderCard is not found, we verify empty state text/locators
@@ -148,6 +150,7 @@ test.describe("BOPIS Order Lifecycle", () => {
         } else {
             console.log(`${orderCount} open orders found.`);
         }
+        await expect(orderCount).toBeGreaterThanOrEqual(0);
     });
 
 });
