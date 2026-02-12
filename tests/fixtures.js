@@ -47,7 +47,7 @@ if (!hasAuthFile) {
     `⚠️  ${path.basename(authFile)} not found for ${environment}/${userType}`
   );
   console.warn(
-    `   Run: npx playwright test auth.setup.spec.js --grep "@setup"`
+    `   Continuing without storageState; tests that perform explicit login will still run.`
   );
 }
 
@@ -69,4 +69,3 @@ const test = baseTest.extend({
 });
 
 module.exports = { test, expect };
-

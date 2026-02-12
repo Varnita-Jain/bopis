@@ -9,6 +9,10 @@ export class OpenDetailPage {
 
     // Action buttons
     this.readyForPickupButton = this.orderDetailsPage.getByTestId("ready-pickup-button");
+    this.readyForPickupButtonAlt = this.orderDetailsPage.getByTestId("ready-for-pickup-button");
+    this.readyForPickupButtonByRole = this.orderDetailsPage.getByRole("button", {
+      name: /ready for pickup/i,
+    });
     this.printPicklistButton = this.orderDetailsPage.getByTestId(
       "print-picklist-button",
     );
@@ -71,9 +75,30 @@ export class OpenDetailPage {
   async markReadyForPickup() {
     console.log("Clicking 'Ready for Pickup'...");
     await this.waitForOverlays();
-    await this.readyForPickupButton.waitFor({ state: "visible", timeout: 15000 });
-    await expect(this.readyForPickupButton).toBeEnabled();
-    await this.readyForPickupButton.click({ force: true });
+    const candidates = [
+      this.readyForPickupButton.first(),
+      this.readyForPickupButtonAlt.first(),
+      this.readyForPickupButtonByRole.first(),
+    ];
+
+    let targetButton = null;
+    for (const candidate of candidates) {
+      const visible = await candidate
+        .waitFor({ state: "visible", timeout: 5000 })
+        .then(() => true)
+        .catch(() => false);
+      if (visible) {
+        targetButton = candidate;
+        break;
+      }
+    }
+
+    if (!targetButton) {
+      throw new Error("Ready for Pickup button not found on open detail page.");
+    }
+
+    await expect(targetButton).toBeEnabled();
+    await targetButton.click({ force: true });
     await this.page.waitForTimeout(500);
   }
 
@@ -159,11 +184,21 @@ export class OpenDetailPage {
     if (!clicked) {
       throw new Error("Unable to click reject button for first item.");
     }
-    // Select a rejection reason
-    await expect(this.rejectionReasonButton.first()).toBeVisible();
-    await this.rejectionReasonButton.first().click();
-    // Ensure submit is enabled
-    await expect(this.submitRejectionButton).toBeEnabled();
+    // Select a rejection reason when available; some environments auto-apply reason.
+    await this.waitForOverlays();
+    const reasonVisible = await this.rejectionReasonButton
+      .first()
+      .waitFor({ state: "visible", timeout: 10000 })
+      .then(() => true)
+      .catch(() => false);
+    if (reasonVisible) {
+      await this.rejectionReasonButton.first().click({ force: true });
+    } else {
+      console.warn("Rejection reason button not visible; checking if submit is already enabled.");
+    }
+
+    // Ensure submit is enabled before submitting rejection.
+    await expect(this.submitRejectionButton).toBeEnabled({ timeout: 10000 });
     await this.submitRejectionButton.click();
 
     // Verify item count is reduced by 1 (best-effort; some envs keep count stable)

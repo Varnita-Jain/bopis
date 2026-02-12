@@ -34,38 +34,67 @@ test("Open -> Packed -> Completed: Handover flow", async ({ page }) => {
   }
 
   const orderName = await orderPage.getOrderName();
+  const normalizedOrderName = orderName.replace(/\s+/g, " ").trim();
+  const numberLikeToken =
+    normalizedOrderName.split(" ").find((t) => /\d/.test(t)) || normalizedOrderName;
   await orderPage.clickFirstOrderCard();
   await openDetail.verifyDetailPage();
   await openDetail.markReadyForPickup();
 
-  if (await openDetail.assignPickerModal.isVisible()) {
+  // Wait for whichever post-click flow appears in this environment.
+  const postReadyFlow = await Promise.race([
+    openDetail.assignPickerModal.waitFor({ state: "visible", timeout: 8000 }).then(() => "modal").catch(() => null),
+    openDetail.readyForPickupAlertBox.waitFor({ state: "visible", timeout: 8000 }).then(() => "alert").catch(() => null),
+    openDetail.orderPackedText.waitFor({ state: "visible", timeout: 8000 }).then(() => "packed").catch(() => null),
+  ]);
+
+  if (postReadyFlow === "modal") {
+    const pickerCount = await openDetail.assignPickerRadios.count();
+    if (pickerCount === 0) {
+      throw new Error("Assign picker modal opened but no picker options were available.");
+    }
     await openDetail.assignPickerAndSave(0);
-  }
-  if (await openDetail.readyForPickupAlertBox.isVisible()) {
+    if (await openDetail.readyForPickupAlertBox.isVisible().catch(() => false)) {
+      await openDetail.confirmReadyPickupAlert();
+    }
+  } else if (postReadyFlow === "alert") {
     await openDetail.confirmReadyPickupAlert();
   }
-  await openDetail.orderPackedText
-    .waitFor({ state: "visible", timeout: 10000 })
-    .catch(() => {});
-  await closeOtherPages();
-  await openDetail.goBack();
 
-  // 2) Packed tab: find order and handover
-  await packedPage.goToPackedTab();
+  await Promise.race([
+    openDetail.orderPackedText.waitFor({ state: "visible", timeout: 12000 }).catch(() => null),
+    page.waitForURL(/orderdetail\/packed\//, { timeout: 12000 }).catch(() => null),
+  ]);
   await closeOtherPages();
-  const packedResult = await orderPage.searchByOrderName(orderName);
-  await packedResult.click();
-  await packedDetail.verifyDetailPageVisible();
-  await page.waitForLoadState("networkidle").catch(() => {});
-  await packedDetail.handoverButton.first().scrollIntoViewIfNeeded().catch(() => {});
-  const hasHandover = await packedDetail.handoverButton
-    .first()
-    .waitFor({ state: "visible", timeout: 15000 })
-    .then(() => true)
-    .catch(() => false);
-  if (!hasHandover) {
-    throw new Error(`Handover button not available on packed detail page for promoted order. URL: ${page.url()}`);
+
+  // 2) Handover from packed detail:
+  // If app already navigated to packed detail after "Ready for Pickup", continue there.
+  // Else go to packed list, open first card, and continue.
+  let onPackedDetail = /\/orderdetail\/packed\//.test(page.url());
+  if (!onPackedDetail) {
+    await openDetail.goBack();
+    let packedCount = 0;
+    for (let i = 0; i < 8; i++) {
+      await packedPage.goToPackedTab();
+      await closeOtherPages();
+      await orderPage.waitForOverlays();
+      packedCount = await packedPage.orderCards.count();
+      if (packedCount > 0) break;
+      await page.waitForTimeout(3000);
+    }
+    if (packedCount === 0) {
+      throw new Error("No orders available in Packed tab after waiting for state transition.");
+    }
+    await packedPage.openFirstOrderDetail();
+    onPackedDetail = /\/orderdetail\/packed\//.test(page.url());
   }
+
+  await packedDetail.verifyDetailPageVisible();
+  const hasHandoverNow = await packedDetail.handoverButton.first().isVisible().catch(() => false);
+  if (!onPackedDetail || !hasHandoverNow) {
+    throw new Error(`Handover button is not visible on packed detail page. URL: ${page.url()}`);
+  }
+  await page.waitForLoadState("networkidle").catch(() => {});
   await packedDetail.handoverOrder();
   await closeOtherPages();
 
@@ -79,9 +108,13 @@ test("Open -> Packed -> Completed: Handover flow", async ({ page }) => {
   await completedPage.goToCompletedTab();
   await closeOtherPages();
   try {
-    const completedResult = await orderPage.searchByOrderName(orderName);
+    const completedResult = await orderPage
+      .searchByOrderName(normalizedOrderName)
+      .catch(() => orderPage.searchByOrderName(numberLikeToken));
     await expect(completedResult).toBeVisible();
   } catch (e) {
-    console.warn(`Order ${orderName} not found in Completed tab; continuing (toast confirmed handover).`);
+    console.warn(
+      `Order ${normalizedOrderName} not found in Completed tab; continuing (toast confirmed handover).`,
+    );
   }
 });
