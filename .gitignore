@@ -16,8 +16,11 @@ $RECYCLE.BIN/
 *.log
 log.txt
 npm-debug.log*
+
 .env
 .env.*
+
+
 .history
 
 /.idea
@@ -29,11 +32,17 @@ npm-debug.log*
 /coverage
 /dist
 /node_modules
+/playwright-report
+/test-results
+auth*.json
 /platforms
 /plugins
 /www
 .gradle
 
-# Excluding the .env.example file from .gitignore
+
+# Keep example file
 !.env.example
+
+
 .firebase

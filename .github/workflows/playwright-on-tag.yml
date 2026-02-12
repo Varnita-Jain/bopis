@@ -1,0 +1,75 @@
+name: Playwright Automation
+
+on:
+  workflow_dispatch:
+  push: 
+    tags:
+      - "*"
+    branches:
+      - "main"
+
+jobs:
+  playwright-tests:
+    name: Run Playwright Automation
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      CI: true
+      CURRENT_APP_URL: ${{ secrets.CURRENT_APP_URL }}
+      OMS_NAME: ${{ secrets.OMS_NAME }}
+      USERNAME: ${{ secrets.USERNAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Generate .env for Playwright
+        run: |
+          cp .env.example .env
+
+          upsert_env() {
+            key="$1"
+            value="$2"
+            if grep -q "^${key}=" .env; then
+              awk -v k="$key" -v v="$value" '
+                BEGIN { FS=OFS="=" }
+                $1 == k { $0 = k "=" v }
+                { print }
+              ' .env > .env.tmp && mv .env.tmp .env
+            else
+              printf "%s=%s\n" "$key" "$value" >> .env
+            fi
+          }
+
+          upsert_env CURRENT_APP_URL "${CURRENT_APP_URL}"
+          upsert_env OMS_NAME "${OMS_NAME}"
+          upsert_env USERNAME "${USERNAME}"
+          upsert_env PASSWORD "${PASSWORD}"
+          upsert_env TEST_ENV "dev"
+          upsert_env TEST_USER "admin"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          npx playwright test \
+            --reporter=html
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
