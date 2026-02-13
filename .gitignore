@@ -16,10 +16,8 @@ $RECYCLE.BIN/
 *.log
 log.txt
 npm-debug.log*
-
 .env
 .env.*
-
 .history
 
 /.idea
@@ -34,15 +32,13 @@ npm-debug.log*
 /playwright-report
 /playwright/.auth
 /test-results
+auth-*.json
 /platforms
 /plugins
 /www
 .gradle
 
-auth-*.json
-
 # Keep example file
 !.env.example
-
 
 .firebase
