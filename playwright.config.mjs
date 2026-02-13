@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const authFile = path.resolve(__dirname, "playwright/.auth/user.json");
 
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -44,8 +45,19 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: "setup",
+      testMatch: /auth\.setup\.js/,
+    },
+    {
+      name: "login-flow",
+      testMatch: /login-flow\.spec\.js/,
+      use: { ...devices["Desktop Chrome"], storageState: undefined },
+    },
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"],
+      testIgnore: [/auth\.setup\.js/, /login-flow\.spec\.js/],
+      use: { ...devices["Desktop Chrome"], storageState: authFile },
     },
 
     // {
