@@ -1,21 +1,17 @@
 import { test as setup, expect } from "@playwright/test";
+import { getAllClients } from "../config/clients.js";
+import { performLogin, getAuthStatePath } from "../helpers/auth.js";
 import fs from "fs";
 import path from "path";
-import { LoginPage } from "../pages/login.page";
 
-const authFile = path.resolve("playwright/.auth/user.json");
+const clients = getAllClients();
 
-setup("authenticate user once", async ({ page }) => {
-  fs.mkdirSync(path.dirname(authFile), { recursive: true });
+for (const client of clients) {
+  setup(`authenticate ${client.clientId}`, async ({ page }) => {
+    const authFile = getAuthStatePath(client.clientId);
+    fs.mkdirSync(path.dirname(authFile), { recursive: true });
 
-  await page.goto(process.env.CURRENT_APP_URL);
-  const login = new LoginPage(page);
-  await login.login(
-    process.env.OMS_NAME,
-    process.env.USERNAME,
-    process.env.PASSWORD,
-  );
-  await login.verifyLoginSuccess();
-
-  await page.context().storageState({ path: authFile });
-});
+    await performLogin(page, client);
+    await page.context().storageState({ path: authFile });
+  });
+}

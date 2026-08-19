@@ -13,22 +13,24 @@ export class OpenDetailPage {
     this.readyForPickupButtonByRole = this.orderDetailsPage.getByRole("button", {
       name: /ready for pickup/i,
     });
+    this.readyForPickupButton = this.page.getByRole('button', { name: 'Ready for pickup' }).first();
+    this.readyToShipButton = this.page.getByRole('button', { name: 'Ready to ship' }).first();
     this.printPicklistButton = this.orderDetailsPage.getByTestId(
       "print-picklist-button",
     );
     this.editPickerChip = this.orderDetailsPage.getByTestId("edit-picker-chip");
 
     // Assign picker modal (dynamic)
-    this.assignPickerModal = page.getByTestId("assign-picker-modal-header");
-    this.assignPickerRadios = page.getByTestId("assign-picker-radio");
-    this.assignPickerSaveButton = page.getByTestId("assign-picker-save-button");
+    this.assignPickerModal = page.locator('ion-modal, ion-alert, ion-popover, [role="dialog"], .modal-wrapper').filter({ hasText: /Assign Pickers?/i }).first();
+    this.assignPickerRadios = page.locator('ion-radio, [data-testid="assign-picker-radio"]');
+    this.assignPickerSaveButton = page.locator('ion-modal button, ion-popover button, [role="dialog"] button, .modal-wrapper button').last();
     this.noPickerMessage = page.getByText(/no picker found/i);
 
 
     // Alert
     this.readyForPickupAlertBox = page.locator("ion-alert");
-    this.readyForPickupAlertButton = page.getByRole("button", {
-      name: "ready for pickup",
+    this.readyForPickupAlertButton = page.locator("ion-alert").getByRole("button", {
+      name: /ready for pickup|ready to ship|confirm|yes|ship/i,
     });
 
     // Rejection Workflow
@@ -69,7 +71,7 @@ export class OpenDetailPage {
     } else {
       await this.page.goBack();
     }
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForTimeout(1000);
   }
 
 
@@ -80,7 +82,7 @@ export class OpenDetailPage {
 
 
   async verifyDetailPage() {
-    await this.orderDetailsPage.waitFor({ state: "visible" });
+    await this.orderDetailsPage.waitFor({ state: "visible", timeout: 10000 });
   }
 
   async markReadyForPickup() {
@@ -125,10 +127,10 @@ export class OpenDetailPage {
     }
     const safeIndex = Math.min(selectedIndex, total - 1);
     await this.assignPickerRadios.nth(safeIndex).waitFor({ state: "visible", timeout: 10000 });
-    await this.assignPickerRadios.nth(safeIndex).click();
+    await this.assignPickerRadios.nth(safeIndex).click({ force: true });
     await this.page.waitForTimeout(300);
     await expect(this.assignPickerSaveButton).toBeEnabled();
-    await this.assignPickerSaveButton.click();
+    await this.assignPickerSaveButton.click({ force: true });
     await this.page.waitForTimeout(500);
   }
 

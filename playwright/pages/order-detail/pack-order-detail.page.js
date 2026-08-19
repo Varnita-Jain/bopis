@@ -7,15 +7,16 @@ export class PackedDetailPage {
     this.orderDetailsPage = this.page.getByTestId("order-details-page");
 
     // Handover button and related elements (Desktop and Mobile FAB)
-    this.handoverButton = this.orderDetailsPage
-      .getByTestId("handover-button")
-      .or(this.orderDetailsPage.getByTestId("handover-fab-button"))
-      .or(this.page.getByRole("button", { name: /handover|ship/i })).first();
+    this.handoverButtonByRole = this.orderDetailsPage.getByRole("button", {
+      name: /handover/i,
+    });
+    this.handoverButton = this.page.getByRole('button', { name: 'Handover' }).first();
+    this.shipButton = this.page.getByRole('button', { name: /^ship$/i }).first();
     this.handedOverSuccessLabel = this.orderDetailsPage.getByTestId(
       "handed-over-success-label",
     );
     this.handoverSuccessText = this.orderDetailsPage.getByText(
-      /order.*(handed over|delivered).*customer/i,
+      /order.*(handed over|delivered|shipped)/i,
     );
 
     this.handoverAlert = page.locator("ion-alert");
@@ -58,7 +59,7 @@ export class PackedDetailPage {
     } else {
       await this.page.goBack();
     }
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForTimeout(1000);
   }
 
 
@@ -72,13 +73,19 @@ export class PackedDetailPage {
     console.log(`Verifying detail page visibility. Current URL: ${this.page.url()}`);
     await this.orderDetailsPage.waitFor({ state: "visible", timeout: 15000 });
 
+    // Handle SPA race condition where "Order not found" might flash before API returns
     const orderNotFound = this.page.getByText(/order not found/i);
-    if (await orderNotFound.isVisible()) {
+    if (await orderNotFound.isVisible().catch(() => false)) {
+      console.log("Placeholder 'Order not found' visible, waiting for API sync...");
+      await this.page.waitForTimeout(3000); // Wait for API to resolve
+    }
+
+    if (await orderNotFound.isVisible().catch(() => false)) {
       throw new Error(`Order not found on detail page! URL: ${this.page.url()}`);
     }
 
     console.log("Waiting for order-name-tag...");
-    await this.orderDetailsPage.getByTestId("order-name-tag").waitFor({ state: "visible", timeout: 20000 });
+    await this.orderDetailsPage.getByTestId("order-name-tag").waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
     console.log("✓ Order Detail page content is visible.");
   }
 

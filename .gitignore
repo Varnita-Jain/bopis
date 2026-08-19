@@ -43,3 +43,7 @@ npm-debug.log*
 
 .firebase
 debugxyz.html
+
+# Local agent scratchpads and temp files
+/scratch/
+*.zip

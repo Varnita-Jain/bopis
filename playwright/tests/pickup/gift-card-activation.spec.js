@@ -84,6 +84,7 @@ test.describe("Gift card activation", () => {
     // Scenario: activate gift card directly from completed list card.
     const completedOrders = new CompletedOrdersPage(page);
     const orderList = new OrderPage(page);
+    await completedOrders.goToCompletedTab();
     const completedListGiftCount = await completedOrders.orderCards
       .filter({ has: completedOrders.giftCardActivationButton })
       .count();

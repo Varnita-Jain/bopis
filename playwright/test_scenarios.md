@@ -100,3 +100,59 @@ While this is a Page Object rather than a test spec, it supports the automation 
 ### Scenario 2.4: Print Packing Slip
 - **Description:** Verify the user can print a packing slip from the list view.
 - **Steps:** Click the packing slip button on the first order card and verify that a popup (blob or PDF) opens correctly.
+
+---
+
+## 3. Flow 1: BOPIS Order Lifecycle (Pickup)
+**File:** [bopis-lifecycle.spec.js](file:///Users/varnitajain/Desktop/Projects/bopis/playwright/tests/pickup/bopis-lifecycle.spec.js)
+
+### Scenario 3.1: Full Store Pickup Lifecycle (Open -> Packed -> Completed)
+- **Description:** Verify the complete fulfillment lifecycle for a BOPIS (Buy Online, Pick Up In Store) order.
+- **Steps:**
+  1. Navigate to Settings and ensure the environment toggle is set to "Pickup" mode.
+  2. Navigate to the Orders tab and scan the "Open" list for a valid, non-corrupted order.
+  3. Open the order details and click "Pack".
+  4. Ensure a success confirmation (toast) is received. If an API error toast occurs (due to bad ghost order data), gracefully skip and try the next order.
+  5. Navigate to the "Packed" tab, search for the packed order, and open its details.
+  6. Click "Handover" to hand the items to the customer.
+  7. Navigate to the "Completed" tab and verify the order appears in the completed list.
+- **Expected Result:** The order correctly transitions through all 3 stages without application failure.
+
+---
+
+## 4. Flow 2: Shipping Order Lifecycle
+**Files:** 
+- [shipping-lifecycle.spec.js](file:///Users/varnitajain/Desktop/Projects/bopis/playwright/tests/shipping/shipping-lifecycle.spec.js) (Via Order Details)
+- [shipping-lifecycle-via-tabs.spec.js](file:///Users/varnitajain/Desktop/Projects/bopis/playwright/tests/shipping/shipping-lifecycle-via-tabs.spec.js) (Via Quick Action Buttons)
+
+### Scenario 4.1: Assign Pickers Modal Resolution
+- **Description:** Verify the application can correctly assign a picker to a shipping order using the modal.
+- **Steps:**
+  1. Click "Ready to Ship" on an open order.
+  2. Wait for the "Assign Pickers" modal to appear.
+  3. Select a picker from the modal list.
+  4. Click the generic "Save" button (floppy disk icon) inside the Shadow DOM container of the modal.
+- **Expected Result:** The picker is assigned and the order progresses to the packed state.
+
+### Scenario 4.2: Full Shipping Lifecycle (Via Details Page)
+- **Description:** Verify the complete fulfillment lifecycle for a Shipping order by opening the detailed view for each step.
+- **Steps:**
+  1. Navigate to Settings and ensure the environment toggle is set to "Shipping" mode.
+  2. Iterate through open orders to find a fresh, uncorrupted order.
+  3. Open the order details and click "Ready to Ship". Handle the Assign Pickers modal if it appears.
+  4. Catch any unfulfillable API data errors (via toast messages). If an error occurs, the test automatically skips to the next order in the list.
+  5. Once successfully packed, navigate to the "Packed" tab.
+  6. Open the order details and click "Ship".
+  7. Navigate to the "Completed" tab and verify the shipped order appears.
+- **Expected Result:** The order correctly transitions to Dispatched/Completed state and API errors are handled gracefully without aborting the suite.
+
+### Scenario 4.3: Full Shipping Lifecycle (Via Quick Action Tabs)
+- **Description:** Verify the shipping lifecycle can be completed rapidly using only the action buttons on the order cards, without entering the detailed view.
+- **Steps:**
+  1. Find a valid open order card.
+  2. Click the "READY TO SHIP" button directly on the card.
+  3. Handle the Assign Picker modal.
+  4. Wait for the success toast and gracefully handle any data-corruption errors by skipping.
+  5. Go to the "Packed" tab, find the order card, and click the "SHIP" button directly on the card.
+  6. Verify the order moves to the "Completed" tab.
+- **Expected Result:** Card action buttons correctly trigger the API state transitions.

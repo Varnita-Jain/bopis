@@ -4,16 +4,29 @@ import { defineConfig, devices } from "@playwright/test";
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import clientsModule from './playwright/config/clients.js';
+import authModule from './playwright/helpers/auth.js';
+
+const { getAllClients } = clientsModule;
+const { getAuthStatePath } = authModule;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const authFile = path.resolve(__dirname, "playwright/.auth/user.json");
 
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+const clients = getAllClients();
 
-dotenv.config();
+const clientProjects = clients.map(client => ({
+  name: `chromium-${client.clientId}`,
+  dependencies: ["setup"],
+  testIgnore: [/auth\.setup\.js/, /login-flow\.spec\.js/],
+  use: { 
+    ...devices["Desktop Chrome"], 
+    storageState: getAuthStatePath(client.clientId),
+  },
+}));
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -34,10 +47,6 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "retain-on-failure",
     video: "retain-on-failure",
   },
@@ -48,48 +57,6 @@ export default defineConfig({
       name: "setup",
       testMatch: /auth\.setup\.js/,
     },
-    {
-      name: "chromium",
-      dependencies: ["setup"],
-      testIgnore: [/auth\.setup\.js/, /login-flow\.spec\.js/],
-      use: { ...devices["Desktop Chrome"], storageState: authFile },
-    },
-
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    ...clientProjects
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });

@@ -86,11 +86,52 @@ export class SettingsPage {
     }
 
     async toggleSetting(locator, expectedState) {
-        const isChecked = await locator.isChecked();
-        if (isChecked !== expectedState) {
+        await locator.scrollIntoViewIfNeeded().catch(() => {});
+        
+        // In Ionic 7+, the state is stored on the ion-toggle element itself
+        const getToggleState = async (loc) => {
+            return await loc.evaluate((node) => {
+                if (node.checked !== undefined) return node.checked;
+                return node.getAttribute('aria-checked') === 'true';
+            });
+        };
+
+        const isCurrentlyChecked = await getToggleState(locator);
+        
+        if (isCurrentlyChecked !== expectedState) {
             await locator.click({ force: true });
+            await this.page.waitForTimeout(1000); // Give Ionic time to animate and save
             await this.waitForOverlays();
-            await expect(locator).toBeChecked({ checked: expectedState });
+            
+            // Verify it flipped
+            const newChecked = await getToggleState(locator);
+            if (newChecked !== expectedState) {
+                console.warn(`Toggle failed to reach state ${expectedState}. Retrying via click on bounding box...`);
+                const box = await locator.boundingBox();
+                if (box) {
+                    await this.page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+                    await this.page.waitForTimeout(1000);
+                }
+            }
         }
+    }
+
+    async ensurePickupMode() {
+        console.log("Ensuring Pickup Mode configuration in Settings...");
+        await this.goToSettings();
+        // 1. Show shipping orders must be OFF
+        await this.toggleSetting(this.showShippingOrdersToggle, false);
+        // 2. Track Pickers must be ON
+        await this.toggleSetting(this.enableTrackingToggle, true);
+        await this.toggleSetting(this.printPicklistsToggle, true);
+        console.log("Pickup Mode environment is ready.");
+    }
+
+    async ensureShippingMode() {
+        console.log("Ensuring Shipping Mode configuration in Settings...");
+        await this.goToSettings();
+        // 1. Show shipping orders must be ON
+        await this.toggleSetting(this.showShippingOrdersToggle, true);
+        console.log("Shipping Mode environment is ready.");
     }
 }

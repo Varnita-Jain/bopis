@@ -3,23 +3,30 @@ import { expect } from "@playwright/test";
 export class OrderPage {
   constructor(page) {
     this.page = page;
-    // Tabs (using text because ion-segment-button data-testid might be missing)
-    this.openTabButton = page.locator('ion-segment-button', { hasText: /^Open$/i });
-    this.packedTabButton = page.locator('ion-segment-button', { hasText: /^Packed$/i });
-    this.completedTabButton = page.locator('ion-segment-button', { hasText: /^Completed$/i });
+    // Bottom Navigation
+    this.ordersBottomTab = page.getByTestId("orders-tab-button");
+
+    // Top Tabs (using data-testid for robustness, appending :visible to avoid hidden Ionic clones)
+    this.openTabButton = page.locator('[data-testid="open-segment-button"]:visible').first();
+    this.packedTabButton = page.locator('[data-testid="packed-segment-button"]:visible').first();
+    this.completedTabButton = page.locator('[data-testid="completed-segment-button"]:visible').first();
 
     // Order Cards
-    this.orderCards = this.page.locator('ion-card.order-item');
+    this.orderCards = this.page.getByTestId('order-card');
     this.firstCard = this.orderCards.first();
 
     this.openOrdersContainer = page.locator('.orders');
     this.packedOrdersContainer = page.locator('.orders');
     this.completedOrdersContainer = page.locator('.orders');
 
+    // Flow 2 (Shipping) Action Buttons
+    this.readyToShipButton = page.locator('ion-button', { hasText: /Ready to ship/i });
+    this.shipButton = page.locator('ion-button', { hasText: /^ship$/i });
+
     // Assign picker
-    this.assignPickerModal = page.locator('ion-header', { hasText: /Assign picker/i });
-    this.assignPickerRadios = page.locator('ion-radio');
-    this.assignPickerSaveButton = page.locator('ion-button', { hasText: /Save/i });
+    this.assignPickerModal = page.locator('ion-modal, ion-alert, ion-popover, [role="dialog"], .modal-wrapper').filter({ hasText: /Assign Pickers?/i }).first();
+    this.assignPickerRadios = page.locator('ion-radio, [data-testid="assign-picker-radio"]');
+    this.assignPickerSaveButton = page.locator('ion-modal button, ion-popover button, [role="dialog"] button, .modal-wrapper button').last();
     // Gift Card Elements
     this.giftCardModal = page.locator('ion-header', { hasText: /Activate Gift Card/i });
     this.giftCardActivationButton = page.locator('ion-button', { hasText: /Activate Gift Card/i });
@@ -58,17 +65,18 @@ export class OrderPage {
   }
 
   async goToOpenTab() {
-    console.log("Navigating to Open tab...");
+    console.log("Navigating to Orders > Open tab...");
     await this.waitForOverlays();
-    // await this.refreshBeforeTabSwitch();
+    await this.ordersBottomTab.click({ force: true }).catch(() => {});
+    await this.waitForOverlays();
 
     await expect(this.openTabButton).toBeVisible({ timeout: 30000 });
     await this.openTabButton.click({ force: true });
     console.log("Waiting for Open tab content to load...");
 
-    // Wait for either the container (if orders exist) or the empty state message
+    // Wait for either the first order card (if orders exist) or the empty state message
     const contentLoaded = await Promise.race([
-      this.openOrdersContainer.waitFor({ state: "visible", timeout: 20000 }).then(() => "orders").catch(() => null),
+      this.orderCards.first().waitFor({ state: "visible", timeout: 20000 }).then(() => "orders").catch(() => null),
       this.noOrdersMessage.waitFor({ state: "visible", timeout: 20000 }).then(() => "empty").catch(() => null)
     ]);
 
@@ -81,28 +89,30 @@ export class OrderPage {
   }
 
   async goToCompletedTab() {
-    console.log("Navigating to Completed tab...");
+    console.log("Navigating to Orders > Completed tab...");
     await this.waitForOverlays();
+    await this.ordersBottomTab.click({ force: true }).catch(() => {});
     await this.refreshBeforeTabSwitch();
     await this.completedTabButton.waitFor({ state: "visible" });
     await this.completedTabButton.click({ force: true });
 
     await Promise.race([
-      this.completedOrdersContainer.waitFor({ state: "visible" }).catch(() => { }),
+      this.orderCards.first().waitFor({ state: "visible" }).catch(() => { }),
       this.noOrdersMessage.waitFor({ state: "visible" }).catch(() => { })
     ]);
     console.log("✓ Completed tab loaded.");
   }
 
   async goToPackedTab() {
-    console.log("Navigating to Packed tab...");
+    console.log("Navigating to Orders > Packed tab...");
     await this.waitForOverlays();
+    await this.ordersBottomTab.click({ force: true }).catch(() => {});
     await this.refreshBeforeTabSwitch();
     await this.packedTabButton.waitFor({ state: "visible" });
     await this.packedTabButton.click({ force: true });
 
     await Promise.race([
-      this.packedOrdersContainer.waitFor({ state: "visible" }).catch(() => { }),
+      this.orderCards.first().waitFor({ state: "visible" }).catch(() => { }),
       this.noOrdersMessage.waitFor({ state: "visible" }).catch(() => { })
     ]);
     console.log("✓ Packed tab loaded.");
@@ -124,7 +134,45 @@ export class OrderPage {
   async clickFirstOrderCard() {
     const firstCard = await this.getFirstOrderCard();
     await firstCard.waitFor({ state: "visible" });
-    await firstCard.click();
+    
+    // Click the name tag specifically to avoid accidentally clicking the "Ready to Ship" action buttons
+    const label = firstCard.getByTestId("order-name-tag");
+    if (await label.isVisible().catch(() => false)) {
+      await label.click();
+    } else {
+      // Fallback: Click the top-left coordinate of the card to avoid center-aligned buttons
+      await firstCard.click({ position: { x: 10, y: 10 } });
+    }
+  }
+
+  async clickReadyForPickupOnCard(card) {
+    const readyButton = card.locator('ion-button').filter({ hasText: /READY FOR PICKUP/i }).first();
+    await expect(readyButton).toBeVisible();
+    await readyButton.click();
+  }
+
+  async clickRejectOnCard(card) {
+    const rejectButton = card.locator('ion-button').filter({ hasText: /REJECT/i }).first();
+    await expect(rejectButton).toBeVisible();
+    await rejectButton.click();
+  }
+
+  async clickHandoverOnCard(card) {
+    const handoverButton = card.locator('ion-button').filter({ hasText: /HANDOVER/i }).first();
+    await expect(handoverButton).toBeVisible();
+    await handoverButton.click();
+  }
+
+  async clickReadyToShipOnCard(card) {
+    const readyButton = card.locator('ion-button').filter({ hasText: /READY TO SHIP/i }).first();
+    await expect(readyButton).toBeVisible();
+    await readyButton.click();
+  }
+
+  async clickShipOnCard(card) {
+    const shipButton = card.locator('ion-button').filter({ hasText: /^SHIP$/i }).first();
+    await expect(shipButton).toBeVisible();
+    await shipButton.click();
   }
   async pageGoback() {
     return this.page.goBack();
@@ -147,9 +195,14 @@ export class OrderPage {
 
   async assignPickerAndSave(selectedIndex = 0) {
     await this.verifyAssignPickerModal();
-    await expect(this.assignPickerRadios.nth(selectedIndex)).toBeVisible();
-    await this.assignPickerRadios.nth(selectedIndex).click();
-    await this.assignPickerSaveButton.click();
+    // Prefer data-testid if available, fallback to ion-radio
+    const radios = this.page.locator('ion-radio, [data-testid="assign-picker-radio"]');
+    await expect(radios.nth(selectedIndex)).toBeVisible({ timeout: 10000 });
+    await radios.nth(selectedIndex).click({ force: true });
+    
+    // The Assign Pickers modal uses a floating save button at the bottom right, which is the last button in the modal
+    const saveBtn = this.page.locator('ion-modal button, ion-popover button, [role="dialog"] button, .modal-wrapper button').last();
+    await saveBtn.click({ force: true });
   }
 
   async handlePopupAndVerify() {
